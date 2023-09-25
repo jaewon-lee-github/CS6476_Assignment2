@@ -358,20 +358,23 @@ class FullyConnectedNet(object):
         # start layer
         self.params["W1"] = torch.normal(
             0, weight_scale, (input_dim, hidden_dims[0])
-        ).to(torch.float64)
-        self.params["b1"] = torch.zeros(hidden_dims[0]).to(torch.float64)
+        ).to(torch.float64).to(device=device)
+        self.params["b1"] = torch.zeros(hidden_dims[0]).to(torch.float64).to(device=device)
+
 
         for i in range(2, self.num_layers):
             self.params[f"W{i}"] = torch.normal(
                 0, weight_scale, (hidden_dims[i - 2], hidden_dims[i - 1])
-            ).to(torch.float64)
-            self.params[f"b{i}"] = torch.zeros(hidden_dims[i - 1]).to(torch.float64)
+            ).to(torch.float64).to(device=device)
+            self.params[f"b{i}"] = torch.zeros(hidden_dims[i - 1]).to(torch.float64).to(device=device)
+
 
         # last layer
         self.params[f"W{self.num_layers}"] = torch.normal(
             0, weight_scale, (hidden_dims[-1], num_classes)
-        ).to(torch.float64)
-        self.params[f"b{self.num_layers}"] = torch.zeros(num_classes).to(torch.float64)
+        ).to(torch.float64).to(device=device)
+
+        self.params[f"b{self.num_layers}"] = torch.zeros(num_classes).to(torch.float64).to(device=device)
 
         # for i in range(1, self.num_layers):
         #     print(self.params[f"W{i}"].shape)
@@ -625,7 +628,7 @@ class Dropout(object):
             # inverted dropout.                                          #
             # Store the dropout mask in the mask variable.               #
             ##############################################################
-            mask = torch.rand(x.shape) > p
+            mask = torch.rand(x.shape).to(device=x.device) > p
             out = x * mask * (1 / (1 - p))
 
             ##############################################################
@@ -636,7 +639,7 @@ class Dropout(object):
             # TODO: Implement the test phase forward pass for            #
             # inverted dropout.                                          #
             ##############################################################
-            mask = torch.ones(x.shape)
+            mask = torch.ones(x.shape).to(device=x.device)
             out = x * mask
             ##############################################################
             #                      END OF YOUR CODE                      #

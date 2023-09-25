@@ -222,7 +222,7 @@ class Solver(object):
         N = X.shape[0]
         if num_samples is not None and N > num_samples:
             mask = torch.randperm(N, device='cpu')[:num_samples]
-            print(self.device)
+            # print(self.device)
             N = num_samples
             X = X[mask]
             y = y[mask]
@@ -253,7 +253,6 @@ class Solver(object):
         iterations_per_epoch = max(num_train // self.batch_size, 1)
         num_iterations = self.num_epochs * iterations_per_epoch
         prev_time = start_time = time.time()
-
         for t in range(num_iterations):
 
             cur_time = time.time()
