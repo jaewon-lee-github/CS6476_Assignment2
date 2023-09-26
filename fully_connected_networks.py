@@ -35,7 +35,6 @@ class Linear(object):
         # TODO: Implement the linear forward pass. Store the result in out.  #
         # You will need to reshape the input into rows.                      #
         ######################################################################
-        # x = x.reshape(x.shape[0], -1)
         out = torch.mm(x.reshape(x.shape[0], -1), w) + b
         ######################################################################
         #                        END OF YOUR CODE                            #
@@ -194,14 +193,10 @@ class TwoLayerNet(object):
         # weights and biases using the keys 'W2' and 'b2'.                #
         ###################################################################
         # Replace "pass" statement with your code
-        self.params["W1"] = torch.normal(0, weight_scale, (input_dim, hidden_dim)).to(
-            torch.float64
-        )
-        self.params["W2"] = torch.normal(0, weight_scale, (hidden_dim, num_classes)).to(
-            torch.float64
-        )
-        self.params["b1"] = torch.zeros(hidden_dim).to(torch.float64)
-        self.params["b2"] = torch.zeros(num_classes).to(torch.float64)
+        self.params["W1"] = torch.normal(0, weight_scale, (input_dim, hidden_dim)).type(dtype)
+        self.params["W2"] = torch.normal(0, weight_scale, (hidden_dim, num_classes)).type(dtype)
+        self.params["b1"] = torch.zeros(hidden_dim).type(dtype)
+        self.params["b2"] = torch.zeros(num_classes).type(dtype)
 
         ###############################################################
         #                            END OF YOUR CODE                 #
@@ -358,23 +353,23 @@ class FullyConnectedNet(object):
         # start layer
         self.params["W1"] = torch.normal(
             0, weight_scale, (input_dim, hidden_dims[0])
-        ).to(torch.float64).to(device=device)
-        self.params["b1"] = torch.zeros(hidden_dims[0]).to(torch.float64).to(device=device)
+        ).to(device=device).to(dtype=dtype)
+        self.params["b1"] = torch.zeros(hidden_dims[0]).to(device=device).to(dtype=dtype)
 
 
         for i in range(2, self.num_layers):
             self.params[f"W{i}"] = torch.normal(
                 0, weight_scale, (hidden_dims[i - 2], hidden_dims[i - 1])
-            ).to(torch.float64).to(device=device)
-            self.params[f"b{i}"] = torch.zeros(hidden_dims[i - 1]).to(torch.float64).to(device=device)
+            ).to(device=device).to(dtype=dtype)
+            self.params[f"b{i}"] = torch.zeros(hidden_dims[i - 1]).to(device=device).to(dtype=dtype)
 
 
         # last layer
         self.params[f"W{self.num_layers}"] = torch.normal(
             0, weight_scale, (hidden_dims[-1], num_classes)
-        ).to(torch.float64).to(device=device)
+        ).to(device=device).to(dtype=dtype)
 
-        self.params[f"b{self.num_layers}"] = torch.zeros(num_classes).to(torch.float64).to(device=device)
+        self.params[f"b{self.num_layers}"] = torch.zeros(num_classes).to(device=device).to(dtype=dtype)
 
         # for i in range(1, self.num_layers):
         #     print(self.params[f"W{i}"].shape)
@@ -425,8 +420,7 @@ class FullyConnectedNet(object):
         Compute loss and gradient for the fully-connected net.
         Input / output: Same as TwoLayerNet above.
         """
-        # X = X.to(self.dtype)
-        X = X.to(torch.float64)
+        X = X.to(self.dtype)
         mode = "test" if y is None else "train"
 
         # Set train/test mode for batchnorm params and dropout param since they
@@ -676,21 +670,15 @@ def optimal(data):
     ##############################################################
     # Replace "pass" statement with your code
     path = "fcn_model.pth"
-    model = FullyConnectedNet([256], dropout=0.5, dtype=torch.float32, device="cpu")
-    solver = Solver(
-        model,
-        data,
-        num_epochs=100,
-        batch_size=512,
-        update_rule=sgd_momentum,
-        optim_config={
-            "learning_rate": 5e-3,
-        },
-        print_every=100000,
-        print_acc_every=10,
-        verbose=True,
-        device="cpu",
-    )
+    model = FullyConnectedNet([256], dropout=0.50, dtype=torch.float64, device='cpu')
+    solver = Solver(model, data,
+                    num_epochs=100, batch_size=256,
+                    update_rule=sgd_momentum,
+                    optim_config={
+                    'learning_rate': 5e-3,
+                    },
+                    print_every=100000, print_acc_every=10,
+                    verbose=True, device='cpu')
     solver.train()  # dont forget to comment this line in final submission after you have trained your model
     solver.model.save(
         path

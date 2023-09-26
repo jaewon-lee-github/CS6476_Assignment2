@@ -351,7 +351,7 @@ class ThreeLayerConvNet(object):
         checkpoint = torch.load(path, map_location="cpu")
         self.params = checkpoint["params"]
         self.dtype = checkpoint["dtype"]
-        self.reg = checkpoint["reg"].to(device=self.dtype)
+        self.reg = checkpoint["reg"]
         print("load checkpoint file: {}".format(path))
 
     def loss(self, X, y=None):
@@ -455,7 +455,6 @@ def create_convolutional_solver_instance(data_dict, dtype, device):
     learning_rate = 0.0001
     num_epochs = 50
     batch_size = 128
-    # update_rule =
     #############################################
 
     input_dims = data_dict["X_train"].shape[1:]
@@ -468,7 +467,7 @@ def create_convolutional_solver_instance(data_dict, dtype, device):
         dtype=torch.float,
         device="cpu",
     )
-
+    print("helllo")
     solver = Solver(
         model,
         data_dict,
