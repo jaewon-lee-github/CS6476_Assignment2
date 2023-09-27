@@ -679,10 +679,10 @@ def optimal(data):
                     },
                     print_every=100000, print_acc_every=10,
                     verbose=True, device='cpu')
-    solver.train()  # dont forget to comment this line in final submission after you have trained your model
-    solver.model.save(
-        path
-    )  # dont forget to comment this line in final submision after you have saved your model
+    # solver.train()  # dont forget to comment this line in final submission after you have trained your model
+    # solver.model.save(
+    #     path
+    # )  # dont forget to comment this line in final submision after you have saved your model
     return solver
     ##############################################################
     #                      END OF YOUR CODE                      #
